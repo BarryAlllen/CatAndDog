@@ -25,22 +25,22 @@ def define_cnn_model():
     model.add(Conv2D(32, (3, 3), activation='relu', padding='same', input_shape=(200, 200, 3)))
     # 最大池化层
     model.add(MaxPooling2D((2, 2)))
-    # 卷积层，卷积核2*2，激活函数relu
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    # 最大池化层
-    model.add(MaxPooling2D((2, 2)))
-    # 卷积层，卷积核是3*3，激活函数relu
-    model.add(Conv2D(128, (3, 3), activation='relu'))
-    # 最大池化层
-    model.add(MaxPooling2D((2, 2)))
-    # 卷积层，卷积核是3*3，激活函数relu
-    model.add(Conv2D(128, (3, 3), activation='relu'))
-    # 最大池化层
-    model.add(MaxPooling2D((2, 2)))
+    # # 卷积层，卷积核2*2，激活函数relu
+    # model.add(Conv2D(64, (3, 3), activation='relu'))
+    # # 最大池化层
+    # model.add(MaxPooling2D((2, 2)))
+    # # 卷积层，卷积核是3*3，激活函数relu
+    # model.add(Conv2D(128, (3, 3), activation='relu'))
+    # # 最大池化层
+    # model.add(MaxPooling2D((2, 2)))
+    # # 卷积层，卷积核是3*3，激活函数relu
+    # model.add(Conv2D(128, (3, 3), activation='relu'))
+    # # 最大池化层
+    # model.add(MaxPooling2D((2, 2)))
     # flatten层，用于将多维的输入一维化，用于卷积层和全连接层的过渡
     model.add(Flatten())
-    # 退出层
-    model.add(Dropout(0.5))
+    # # 退出层
+    # model.add(Dropout(0.5))
     # 全连接，激活函数relu
     model.add(Dense(128, activation='relu'))
     # 全连接，激活函数sigmoid
@@ -75,7 +75,12 @@ def train_cnn_model():
                                                )
     # 训练模型
     model.fit_generator(teain_target,
-                        steps_per_epoch=(teain_target),
-                        epochs=1,
+                        steps_per_epoch=100,
+                        epochs=10,
                         verbose=1
                         )
+
+    # 保存训练得到的的模型
+    model.save('data\cats_and_dogs_small_1.h5')
+
+train_cnn_model()
