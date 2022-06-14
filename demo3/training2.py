@@ -16,6 +16,7 @@ from tensorflow.python.keras.api.keras.layers import Dense
 from tensorflow.python.keras.api.keras.optimizers import SGD
 from tensorflow.python.keras.api.keras.utils import plot_model
 
+
 # 1.构建网络模型
 def define_cnn_model():
     # keras的序贯模型
@@ -59,10 +60,22 @@ def define_cnn_model():
     return model
 
 
-
-#生成图片
+# 生成神经网络结构图片
 # plot_model(model,to_file='cnn_model.png',dpi=100,show_shapes=True,show_layer_names=True)
 
 def train_cnn_model():
     # 生成模型
     model = define_cnn_model()
+    # 创建图片生成器
+    datagen = ImageDataGenerator(rescale=1.0 / 255.0)
+    teain_target = datagen.flow_from_directory('H:\\Machine Learning\\CNN\\CNNProjects\\data\\train3\\train',
+                                               class_mode='binary',
+                                               batch_size=64,
+                                               target_size=(200, 200)
+                                               )
+    # 训练模型
+    model.fit_generator(teain_target,
+                        steps_per_epoch=(teain_target),
+                        epochs=1,
+                        verbose=1
+                        )
