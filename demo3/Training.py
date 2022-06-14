@@ -64,51 +64,8 @@ datagen = ImageDataGenerator(
     horizontal_flip=True,
     fill_mode='nearest')
 
-# 查看数据增强后的效果
-# train_cats_dir="H:\\Machine Learning\\CNN\\CNNProjects\\data\\train2\\train\\cats"
-# # This is module with image preprocessing utilities
-# fnames = [os.path.join(train_cats_dir, fname) for fname in os.listdir(train_cats_dir)]
-# # We pick one image to "augment"
-# img_path = fnames[3]
-# # Read the image and resize it
-# img = image.load_img(img_path, target_size=(150, 150))
-# # Convert it to a Numpy array with shape (150, 150, 3)
-# x = image.img_to_array(img)
-# # Reshape it to (1, 150, 150, 3)
-# x = x.reshape((1,) + x.shape)
-# # The .flow() command below generates batches of randomly transformed images.
-# # It will loop indefinitely, so we need to `break` the loop at some point!
-# i = 0
-# for batch in datagen.flow(x, batch_size=1):
-#     plt.figure(i)
-#     imgplot = plt.imshow(image.array_to_img(batch[0]))
-#     i += 1
-#     if i % 4 == 0:
-#         break
-# plt.show()
-
-
 # 3.图片格式转化
-# 所有图像将按1/255重新缩放
-# train_datagen = ImageDataGenerator(rescale=1./255)
-# test_datagen = ImageDataGenerator(rescale=1./255)
-#
-train_dir = "H:\\Machine Learning\\CNN\\CNNProjects\\data\\train3\\train"
-validation_dir = "H:\\Machine Learning\\CNN\\CNNProjects\\data\\train3\\validation"
-# train_generator = train_datagen.flow_from_directory(
-#         # 这是目标目录
-#         train_dir,
-#         # 所有图像将调整为150x150
-#         target_size=(150, 150),
-#         batch_size=20,
-#         # 因为我们使用二元交叉熵损失，我们需要二元标签
-#         class_mode='binary')
-#
-# validation_generator = test_datagen.flow_from_directory(
-#         validation_dir,
-#         target_size=(150, 150),
-#         batch_size=20,
-#         class_mode='binary')
+
 
 train_datagen = ImageDataGenerator(
     rescale=1. / 255,
@@ -120,19 +77,10 @@ train_datagen = ImageDataGenerator(
     horizontal_flip=True, )
 # Note that the validation data should not be augmented!
 test_datagen = ImageDataGenerator(rescale=1. / 255)
-# train_generator = train_datagen.flow_from_directory(
-#         # This is the target directory
-#         train_dir,
-#         # All images will be resized to 150x150
-#         target_size=(150, 150),
-#         batch_size=32,
-#         # Since we use binary_crossentropy loss, we need binary labels
-#         class_mode='binary')
-# validation_generator = test_datagen.flow_from_directory(
-#         validation_dir,
-#         target_size=(150, 150),
-#         batch_size=32,
-#         class_mode='binary')
+
+train_dir = "H:\\Machine Learning\\CNN\\CNNProjects\\data\\train3\\train"
+validation_dir = "H:\\Machine Learning\\CNN\\CNNProjects\\data\\train3\\validation"
+
 train_generator = train_datagen.flow_from_directory(
     # 这是目标目录
     train_dir,
