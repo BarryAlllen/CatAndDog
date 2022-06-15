@@ -61,7 +61,7 @@ def cnn_model():
 # 生成神经网络结构图片
 def get_plot_model():
     model = cnn_model()
-    plot_model(model,to_file='cnn_model.png',dpi=100,show_shapes=True,show_layer_names=True)
+    plot_model(model, to_file='resources/cnn_model.png', dpi=100, show_shapes=True, show_layer_names=True)
 
 # 训练模型
 def train_cnn_model():
