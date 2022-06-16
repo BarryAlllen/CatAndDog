@@ -2,6 +2,7 @@ import itertools
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.metrics import confusion_matrix
 from tensorflow.python.keras.api.keras import layers, models
 from tensorflow.python.keras.api.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.api import keras
@@ -14,43 +15,45 @@ from tensorflow.python.keras.api.keras.layers import Dense
 from tensorflow.python.keras.api.keras.utils import plot_model
 
 # 神经网络模型构建
-from tensorflow.python.ops.confusion_matrix import confusion_matrix
+
 
 wh = 200
 batch_size = 32
-tn = 0
+
 
 def cnn_model():
     # 初始化序列模型
     model = models.Sequential()
 
-    # # 官方搭建的VGG19网络
-    # conv_base = keras.applications.VGG19(weights='imagenet', include_top=False)
-    # # 设置为不可训练
-    # conv_base.trainable = False
+    # 官方搭建的VGG19网络
+    conv_base = keras.applications.VGG19(weights='imagenet', include_top=False)
+    # 设置为不可训练
+    conv_base.trainable = False
+    model.add(conv_base)
+    model.add(keras.layers.GlobalAveragePooling2D())
 
-    # 卷积层 卷积核 3x3 输入为200x200的RGB图片
-    model.add(Conv2D(16, (3, 3), activation='relu', padding='same', input_shape=(wh, wh, 3)))
-    # 最大池化层
-    model.add(MaxPooling2D((2, 2)))
-
-    # 卷积层 卷积核 3x3 输出维度64
-    model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
-    # 最大池化层
-    model.add(MaxPooling2D((2, 2)))
-
-    # 卷积层 卷积核 3x3 输出维度128
-    model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
-    # 最大池化层
-    model.add(MaxPooling2D((2, 2)))
-
-    # # 卷积层 卷积核 3x3 输出维度128
-    # model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+    # # 卷积层 卷积核 3x3 输入为200x200的RGB图片
+    # model.add(Conv2D(16, (3, 3), activation='relu', padding='same', input_shape=(wh, wh, 3)))
     # # 最大池化层
     # model.add(MaxPooling2D((2, 2)))
+    #
+    # # 卷积层 卷积核 3x3 输出维度64
+    # model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
+    # # 最大池化层
+    # model.add(MaxPooling2D((2, 2)))
+    #
+    # # 卷积层 卷积核 3x3 输出维度128
+    # model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+    # # 最大池化层
+    # model.add(MaxPooling2D((2, 2)))
+    #
+    # # # 卷积层 卷积核 3x3 输出维度128
+    # # model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+    # # # 最大池化层
+    # # model.add(MaxPooling2D((2, 2)))
 
-    # flatten层
-    model.add(Flatten())
+    # # flatten层
+    # model.add(Flatten())
 
     # 全连接层
     model.add(Dense(512, activation='relu'))
@@ -68,7 +71,7 @@ def cnn_model():
     # model.compile(loss='binary_crossentropy',
     #               optimizer=optimizers.RMSprop(lr=1e-4),
     #               metrics=['accuracy'])
-    #动态学习率为指数衰减型
+    # 动态学习率为指数衰减型
     lr_sch = keras.optimizers.schedules.ExponentialDecay(
         initial_learning_rate=1e-4,
         decay_steps=50,
@@ -76,7 +79,7 @@ def cnn_model():
         staircase=True
     )
 
-    gen_optimizer = keras.optimizers.Adam(learning_rate=lr_sch) # adam优化器
+    gen_optimizer = keras.optimizers.Adam(learning_rate=lr_sch)  # adam优化器
     # 编译模型
     model.compile(
         optimizer=gen_optimizer,
@@ -124,8 +127,6 @@ def train_cnn_model():
         target_size=(wh, wh),
         # batch数据大小 一次输入64张图片进行训练
         batch_size=batch_size,
-        # 返回标签数组形式 二进制
-        # class_mode='binary'
         class_mode='categorical'
     )
 
@@ -136,44 +137,50 @@ def train_cnn_model():
         validation_dir,
         target_size=(wh, wh),
         batch_size=batch_size,
-        # class_mode='binary'
-        class_mode = 'categorical'
+        class_mode='categorical'
     )
 
     # 训练模型
     history = model.fit_generator(
         train_generator,  # 定义的图片生成器
         steps_per_epoch=100,
-        epochs=5,  # 数据迭代的轮数
+        epochs=100,  # 数据迭代的轮数
         validation_data=validation_generator,
         validation_steps=50
     )
 
-    labels = ['cats', 'dogs']
     y_pred = model.predict(train_generator, tg // batch_size + 1)
     y_pred_classes = np.argmax(y_pred, axis=1)
     confusion_mtx = confusion_matrix(y_true=train_generator.classes, y_pred=y_pred_classes)
-    plot_confusion_matrix(confusion_mtx,normalize=True, target_names=labels)
+    plot_confusion_matrix(confusion_mtx, normalize=True, target_names=['cats', 'dogs'])
 
     # 保存训练得到的的模型
-    model.save('data\catDogFight08-3.h5')
-
-    # labels = ['cat', 'dogs']
-    # y_pred = model.predict(test_datagen)
-    # y_pred_classes = np.argmax(y_pred, axis=1)
-    # confusion_mtx = confusion_matrix(y_true=test_datagen.classes, y_pred=y_pred_classes)
-    # plot_confusion_matrix(confusion_mtx,normalize=True,target_names=labels)
+    model.save('data\catDogFight12-VGG19.h5')
 
     plt_result(history)
 
 
-# 绘制混淆矩阵的
-def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap=None, normalize=False):
-    accuracy = np.trace(cm) / float(np.sum(cm))  # 计算准确率
-    misclass = 1 - accuracy  # 计算错误率
+# 绘制混淆矩阵
+def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap=plt.cm.Blues, normalize=False):
+    tp = cm[0][0]
+    tn = cm[1][1]
+    fp = cm[1][0]
+    fn = cm[0][1]
+    print(cm)
+    accuracy = np.trace(cm) / float(np.sum(cm))  # 准确率
+    misclass = 1 - accuracy  # 错误率
+    recall = (tp) / (tp+fn) # 召回率
+    precision = (tp) / (tp+fp) # 精确率
+    F1score = 2 * precision * recall / (precision + recall) # F1score
+    print("准确率:"+str(round(accuracy,4)))
+    print("错误率:"+str(round(misclass,4)))
+    print("召回率:"+str(round(recall, 4)))
+    print("精确率:"+str(round(precision,4)))
+    print("F1score:"+str(round(F1score,4)))
+
     if cmap is None:
         plt.get_cmap('Blues')  # 颜色设置成蓝色
-    plt.figure(figsize=(10, 8))  # 设置窗口尺寸
+    plt.figure(figsize=(16, 16))  # 设置窗口尺寸
     plt.imshow(cm, interpolation='nearest', cmap=cmap)  # 显示图片
     plt.title(title)  # 显示标题
     plt.colorbar()  # 绘制颜色条
@@ -181,7 +188,7 @@ def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap=None,
     # 设置x,y坐标标签
     if target_names is not None:
         tick_marks = np.arange(len(target_names))
-        plt.xticks(tick_marks, target_names, rotation=45)  # x坐标标签旋转45度
+        plt.xticks(tick_marks, target_names)  # x坐标
         plt.yticks(tick_marks, target_names)  # y坐标
 
     if normalize:
@@ -202,19 +209,20 @@ def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap=None,
 
     plt.tight_layout()  # 自动调整子图参数,使之填充整个图像区域
     plt.ylabel('True label')  # y方向上的标签
-    plt.xlabel("Predicted label\naccuracy={:0.4f}\n misclass={:0.4f}".format(accuracy, misclass))  # x方向上的标签
+    plt.xlabel("Predicted label\n accuracy={:0.4f}\n misclass={:0.4f}\n recall={:0.4f}\n precision={:0.4f}\n F1score={:0.4f}".format(accuracy, misclass, recall, precision,
+                                                                             F1score))  # x方向上的标签
     plt.show()  # 显示图片
 
 # 使曲线变得顺滑
 def smooth_curve(points, factor=0.8):
-  smoothed_points = []
-  for point in points:
-    if smoothed_points:
-      previous = smoothed_points[-1]
-      smoothed_points.append(previous * factor + point * (1 - factor))
-    else:
-      smoothed_points.append(point)
-  return smoothed_points
+    smoothed_points = []
+    for point in points:
+        if smoothed_points:
+            previous = smoothed_points[-1]
+            smoothed_points.append(previous * factor + point * (1 - factor))
+        else:
+            smoothed_points.append(point)
+    return smoothed_points
 
 # 结果可视化
 def plt_result(history):
@@ -241,6 +249,5 @@ def plt_result(history):
     plt.legend()
 
     plt.show()
-
 
 train_cnn_model()

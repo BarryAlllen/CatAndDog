@@ -5,6 +5,8 @@ from tensorflow.python.keras.api.keras.models import load_model
 from matplotlib.pyplot import imshow
 import numpy as np
 from PIL import Image
+from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
+
 
 def read_image():
     path='H:\\Machine Learning\\CNN\\CNNProjects\\data\\test\\1223.jpg'
@@ -84,6 +86,8 @@ def preditCatAndDog3(pil,model):
     # else:
     #     print('cat')
     #     return 'cat'
+
+
 
 
 
