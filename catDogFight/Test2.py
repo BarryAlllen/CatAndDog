@@ -1,27 +1,9 @@
-import os
-
-import matplotlib.pyplot as plt
 from tensorflow.python.keras.api.keras.models import load_model
-from matplotlib.pyplot import imshow
-import numpy as np
-from PIL import Image
-from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
 import itertools
-import os
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import confusion_matrix
-from tensorflow.python.keras.api.keras import layers, models
 from tensorflow.python.keras.api.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.python.keras.api import keras
-from tensorflow.python.keras.api.keras.layers import Conv2D
-from tensorflow.python.keras.api.keras.layers import MaxPooling2D
-from tensorflow.python.keras.api.keras.layers import Flatten
-from tensorflow.python.keras.api.keras.layers import Dropout
-from tensorflow.python.keras.api.keras.layers import Dense
-
-from tensorflow.python.keras.api.keras.utils import plot_model
-
 
 # 绘制混淆矩阵
 def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap='BuGn', normalize=False):
@@ -29,13 +11,14 @@ def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap='BuGn
     tn = cm[1][1]
     fp = cm[1][0]
     fn = cm[0][1]
+    print('\n混淆矩阵:')
     print(cm)
     accuracy = np.trace(cm) / float(np.sum(cm))  # 准确率
     misclass = 1 - accuracy  # 错误率
     recall = (tp) / (tp + fn)  # 召回率
     precision = (tp) / (tp + fp)  # 精确率
     F1score = 2 * precision * recall / (precision + recall)  # F1score
-    print("准确率:" + str(round(accuracy, 4)))
+    print("\n准确率:" + str(round(accuracy, 4)))
     print("错误率:" + str(round(misclass, 4)))
     print("召回率:" + str(round(recall, 4)))
     print("精确率:" + str(round(precision, 4)))
@@ -43,7 +26,7 @@ def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap='BuGn
 
     if cmap is None:
         plt.get_cmap('Greens')  # 颜色设置成蓝色
-    plt.figure(figsize=(22, 20))  # 设置窗口尺寸
+    plt.figure(figsize=(6, 6))  # 设置窗口尺寸
     plt.imshow(cm, interpolation='nearest', cmap=cmap)  # 显示图片
     plt.title(title)  # 显示标题
     plt.colorbar()  # 绘制颜色条
@@ -70,39 +53,35 @@ def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap='BuGn
                      horizontalalignment="center",  # 数字在方框中间
                      color="white" if cm[i, j] > thresh else "black")  # 设置字体颜色
 
-    plt.tight_layout()  # 自动调整子图参数,使之填充整个图像区域
+    # plt.tight_layout()  # 自动调整子图参数,使之填充整个图像区域
     plt.ylabel('True label')  # y方向上的标签
     plt.xlabel(
-        "Predicted label\n accuracy={:0.4f}\n misclass={:0.4f}\n recall={:0.4f}\n precision={:0.4f}\n F1score={:0.4f}".format(
+        "Predicted label\n\n accuracy={:0.4f}    misclass={:0.4f}\nrecall={:0.4f}    precision={:0.4f}    F1score={:0.4f}".format(
             accuracy, misclass, recall, precision,
             F1score))  # x方向上的标签
     plt.show()  # 显示图片
 
 wh = 200
-batch_size = 50
 
 # 测试数据图片归一化
 test_datagen = ImageDataGenerator(rescale=1. / 255)
 
-# 训练文件路径
-train_dir = 'H:\\Machine Learning\\CNN\\CNNProjects\\data\\train_data\\train'
-# 验证文件路径
-validation_dir = 'H:\\Machine Learning\\CNN\\CNNProjects\\data\\train_data\\validation'
-
+# 测试文件路径
 test_dir = 'H:\\Machine Learning\\CNN\\CNNProjects\\data\\train_data\\test'
 
 test_generator = test_datagen.flow_from_directory(
     # 验证文件路径
     test_dir,
     target_size=(wh, wh),
-    batch_size=batch_size,
+    batch_size=50,
     shuffle=False,  # 不打乱标签
     class_mode='categorical'
 )
 
-path = 'data\catDogFight13-DenseNet121.h5'
+path = 'data\catDogFight13-DenseNet121-f.h5'
 model = load_model(path)
 
+print('正在预测...')
 y_true = test_generator.classes
 y_pred = model.predict(test_generator, batch_size=50, verbose=1)
 y_pred = np.argmax(y_pred, axis=1)
