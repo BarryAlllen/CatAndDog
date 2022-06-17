@@ -69,7 +69,7 @@ def preditCatAndDog2(model):
             print('cat')
 
 def preditCatAndDog3(pil,model):
-    t = 150
+    t = 200
     w = t
     h = t
     #缩放图片
@@ -80,20 +80,16 @@ def preditCatAndDog3(pil,model):
     array = array.reshape(1,w,h,3)
     res = model.predict(array)
     print(res)
-    # if res[0][0]>0.5:
-    #     print('dog')
-    #     return 'dog'
-    # else:
-    #     print('cat')
-    #     return 'cat'
-
-
-
-
+    if res[0][0]<res[0][1]:
+        print('dog')
+        return 'dog'
+    else:
+        print('cat')
+        return 'cat'
 
 
 #载入模型
-path='data\catDogFight06-3.h5'
+path='data\catDogFight13-DenseNet121.h5'
 model = load_model(path)
 
 pil = read_image();

@@ -98,9 +98,9 @@ def cnn_model():
 # 生成神经网络结构图片
 def get_plot_model():
     model = cnn_model()
-    plot_model(model, to_file='resources/cnn_model.png', dpi=100, show_shapes=True, show_layer_names=True)
+    plot_model(model, to_file='resources/cnn_model_DenseNet121.png', dpi=100, show_shapes=True, show_layer_names=True)
 
-
+get_plot_model()
 # 训练模型
 def train_cnn_model():
     # 生成模型
@@ -145,11 +145,13 @@ def train_cnn_model():
         class_mode='categorical'
     )
 
+    vg = validation_generator.n
+
     # 训练模型
     history = model.fit_generator(
         train_generator,  # 定义的图片生成器
         steps_per_epoch=100,
-        epochs=100,  # 数据迭代的轮数
+        epochs=1,  # 数据迭代的轮数
         validation_data=validation_generator,
         validation_steps=50
     )
@@ -160,9 +162,10 @@ def train_cnn_model():
     plot_confusion_matrix(confusion_mtx, normalize=True, target_names=['cats', 'dogs'])
 
     # 保存训练得到的的模型
-    model.save('data\catDogFight13-DenseNet121.h5')
+    model.save('data\catDogFight13-DenseNet121-2.h5')
 
     plt_result(history)
+
 
 
 # 绘制混淆矩阵
