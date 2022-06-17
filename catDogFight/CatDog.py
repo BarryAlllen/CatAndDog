@@ -1,18 +1,17 @@
 import itertools
+import os
 from datetime import datetime
-
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import confusion_matrix
 from tensorflow.python.keras.api.keras import models
 from tensorflow.python.keras.api.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.api import keras
-from tensorflow.python.keras.api.keras.layers import Conv2D
-from tensorflow.python.keras.api.keras.layers import MaxPooling2D
 from tensorflow.python.keras.api.keras.layers import Flatten
 from tensorflow.python.keras.api.keras.layers import Dropout
 from tensorflow.python.keras.api.keras.layers import Dense
 from tensorflow.python.keras.api.keras.utils import plot_model
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'  # 去掉加载GPU的警告
 
 # 神经网络模型构建
 

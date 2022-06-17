@@ -1,9 +1,11 @@
+import os
 from tensorflow.python.keras.api.keras.models import load_model
 import itertools
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import confusion_matrix
 from tensorflow.python.keras.api.keras.preprocessing.image import ImageDataGenerator
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'  # 去掉加载GPU的警告
 
 # 绘制混淆矩阵
 def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap='BuGn', normalize=False):
@@ -87,11 +89,3 @@ y_pred = model.predict(test_generator, batch_size=50, verbose=1)
 y_pred = np.argmax(y_pred, axis=1)
 confusion_mtx = confusion_matrix(y_true=y_true, y_pred=y_pred)
 plot_confusion_matrix(confusion_mtx, normalize=True, target_names=['cats', 'dogs'])
-# y_pred = model.predict(test_generator, batch_size=32, verbose=1)
-# y_pred_classes = np.argmax(y_pred, axis=1)
-# print(y_pred)
-# print(y_pred.shape)
-# print(y_pred_classes)
-# print(test_generator.classes)
-# confusion_mtx = confusion_matrix(y_true=test_generator.classes, y_pred=y_pred_classes)
-# plot_confusion_matrix(confusion_mtx, normalize=True, target_names=['cats', 'dogs'])
