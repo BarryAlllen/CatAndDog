@@ -1,9 +1,8 @@
 import itertools
-import os
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import confusion_matrix
-from tensorflow.python.keras.api.keras import layers, models
+from tensorflow.python.keras.api.keras import models
 from tensorflow.python.keras.api.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.api import keras
 from tensorflow.python.keras.api.keras.layers import Conv2D
@@ -11,15 +10,12 @@ from tensorflow.python.keras.api.keras.layers import MaxPooling2D
 from tensorflow.python.keras.api.keras.layers import Flatten
 from tensorflow.python.keras.api.keras.layers import Dropout
 from tensorflow.python.keras.api.keras.layers import Dense
-
 from tensorflow.python.keras.api.keras.utils import plot_model
 
 # 神经网络模型构建
 
-
+# 图片宽高
 wh = 200
-batch_size = 32
-
 
 def cnn_model():
     # 初始化序列模型
@@ -94,13 +90,13 @@ def cnn_model():
 
     return model
 
-
 # 生成神经网络结构图片
 def get_plot_model():
     model = cnn_model()
     plot_model(model, to_file='resources/cnn_model_DenseNet121.png', dpi=100, show_shapes=True, show_layer_names=True)
 
 get_plot_model()
+
 # 训练模型
 def train_cnn_model():
     # 生成模型
@@ -121,59 +117,75 @@ def train_cnn_model():
     test_datagen = ImageDataGenerator(rescale=1. / 255)
 
     # 训练文件路径
-    train_dir = 'H:\\Machine Learning\\CNN\\CNNProjects\\data\\train4\\train'
+    train_dir = 'H:\\Machine Learning\\CNN\\CNNProjects\\data\\train_data\\train'
     # 验证文件路径
-    validation_dir = 'H:\\Machine Learning\\CNN\\CNNProjects\\data\\train4\\validation'
+    validation_dir = 'H:\\Machine Learning\\CNN\\CNNProjects\\data\\train_data\\validation'
+    # 测试文件路径
+    test_dir = 'H:\\Machine Learning\\CNN\\CNNProjects\\data\\train_data\\test'
 
     train_generator = train_datagen.flow_from_directory(
         # 训练文件路径
         train_dir,
         # 图像统一尺寸
         target_size=(wh, wh),
-        # batch数据大小 一次输入64张图片进行训练
-        batch_size=batch_size,
+        # batch数据大小 一次输入40张图片进行训练
+        batch_size=32,
         class_mode='categorical'
     )
-
-    tg = train_generator.n
 
     validation_generator = test_datagen.flow_from_directory(
         # 验证文件路径
         validation_dir,
         target_size=(wh, wh),
-        batch_size=batch_size,
+        batch_size=32,
         class_mode='categorical'
     )
 
-    vg = validation_generator.n
+    test_generator = test_datagen.flow_from_directory(
+        # 验证文件路径
+        test_dir,
+        target_size=(wh, wh),
+        batch_size=50,
+        shuffle=False,  # 不打乱标签
+        class_mode='categorical'
+    )
 
     # 训练模型
     history = model.fit_generator(
         train_generator,  # 定义的图片生成器
         steps_per_epoch=100,
-        epochs=1,  # 数据迭代的轮数
+        epochs=2,  # 数据迭代的轮数
         validation_data=validation_generator,
         validation_steps=50
     )
 
-    y_pred = model.predict(train_generator, tg // batch_size + 1)
-    y_pred_classes = np.argmax(y_pred, axis=1)
-    confusion_mtx = confusion_matrix(y_true=train_generator.classes, y_pred=y_pred_classes)
-    plot_confusion_matrix(confusion_mtx, normalize=True, target_names=['cats', 'dogs'])
+    # y_pred = model.predict(train_generator, tg // batch_size + 1)
+    # y_pred_classes = np.argmax(y_pred, axis=1)
+    # confusion_mtx = confusion_matrix(y_true=train_generator.classes, y_pred=y_pred_classes)
+    # plot_confusion_matrix(confusion_mtx, normalize=True, target_names=['cats', 'dogs'])
+    get_confusion_matrix(model,test_generator)
 
     # 保存训练得到的的模型
-    model.save('data\catDogFight13-DenseNet121-2.h5')
+    model.save('data\catDogFight13-DenseNet121-f.h5')
 
     plt_result(history)
 
-
+# 得到混淆矩阵等数据
+def get_confusion_matrix(model ,test_generator):
+    print('正在预测: ...')
+    y_true = test_generator.classes
+    y_pred = model.predict(test_generator, batch_size=50, verbose=1)
+    y_pred = np.argmax(y_pred, axis=1)
+    confusion_mtx = confusion_matrix(y_true=y_true, y_pred=y_pred)
+    plot_confusion_matrix(confusion_mtx, normalize=True, target_names=['cats', 'dogs'])
 
 # 绘制混淆矩阵
-def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap=None, normalize=False):
+def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap='Greens', normalize=False):
     tp = cm[0][0]
     tn = cm[1][1]
     fp = cm[1][0]
     fn = cm[0][1]
+    print('混淆矩阵:')
     print(cm)
     accuracy = np.trace(cm) / float(np.sum(cm))  # 准确率
     misclass = 1 - accuracy  # 错误率

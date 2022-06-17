@@ -9,7 +9,7 @@ from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
 
 
 def read_image():
-    path='H:\\Machine Learning\\CNN\\CNNProjects\\data\\test\\1223.jpg'
+    path='H:\\Machine Learning\\CNN\\CNNProjects\\data\\test\\1.jpg'
     # path='./resources/cat.jpg'
     pil = Image.open(path,'r')
     return pil
