@@ -25,10 +25,15 @@ def cnn_model():
     # 初始化序列模型
     model = models.Sequential()
 
-    # 官方搭建的VGG19网络
-    conv_base = keras.applications.VGG19(weights='imagenet', include_top=False)
-    # 设置为不可训练
-    conv_base.trainable = False
+    # # 官方搭建的VGG19网络
+    # conv_base = keras.applications.VGG19(weights='imagenet', include_top=False)
+    # # 设置为不可训练
+    # conv_base.trainable = False
+
+    # 官方搭建的DenseNet121网络
+    conv_base = keras.applications.DenseNet121(weights='imagenet', include_top=False,input_shape=(200,200,3))
+    # 设置为可训练
+    conv_base.trainable = True
     model.add(conv_base)
     model.add(keras.layers.GlobalAveragePooling2D())
 
@@ -47,13 +52,13 @@ def cnn_model():
     # # 最大池化层
     # model.add(MaxPooling2D((2, 2)))
     #
-    # # # 卷积层 卷积核 3x3 输出维度128
-    # # model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
-    # # # 最大池化层
-    # # model.add(MaxPooling2D((2, 2)))
+    # # 卷积层 卷积核 3x3 输出维度128
+    # model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+    # # 最大池化层
+    # model.add(MaxPooling2D((2, 2)))
 
-    # # flatten层
-    # model.add(Flatten())
+    # flatten层
+    model.add(Flatten())
 
     # 全连接层
     model.add(Dense(512, activation='relu'))
@@ -155,13 +160,13 @@ def train_cnn_model():
     plot_confusion_matrix(confusion_mtx, normalize=True, target_names=['cats', 'dogs'])
 
     # 保存训练得到的的模型
-    model.save('data\catDogFight12-VGG19.h5')
+    model.save('data\catDogFight13-DenseNet121.h5')
 
     plt_result(history)
 
 
 # 绘制混淆矩阵
-def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap=plt.cm.Blues, normalize=False):
+def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap=None, normalize=False):
     tp = cm[0][0]
     tn = cm[1][1]
     fp = cm[1][0]
