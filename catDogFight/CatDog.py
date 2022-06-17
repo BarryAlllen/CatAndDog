@@ -1,4 +1,6 @@
 import itertools
+from datetime import datetime
+
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import confusion_matrix
@@ -21,37 +23,12 @@ def cnn_model():
     # 初始化序列模型
     model = models.Sequential()
 
-    # # 官方搭建的VGG19网络
-    # conv_base = keras.applications.VGG19(weights='imagenet', include_top=False)
-    # # 设置为不可训练
-    # conv_base.trainable = False
-
     # 官方搭建的DenseNet121网络
     conv_base = keras.applications.DenseNet121(weights='imagenet', include_top=False,input_shape=(200,200,3))
     # 设置为可训练
     conv_base.trainable = True
     model.add(conv_base)
     model.add(keras.layers.GlobalAveragePooling2D())
-
-    # # 卷积层 卷积核 3x3 输入为200x200的RGB图片
-    # model.add(Conv2D(16, (3, 3), activation='relu', padding='same', input_shape=(wh, wh, 3)))
-    # # 最大池化层
-    # model.add(MaxPooling2D((2, 2)))
-    #
-    # # 卷积层 卷积核 3x3 输出维度64
-    # model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
-    # # 最大池化层
-    # model.add(MaxPooling2D((2, 2)))
-    #
-    # # 卷积层 卷积核 3x3 输出维度128
-    # model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
-    # # 最大池化层
-    # model.add(MaxPooling2D((2, 2)))
-    #
-    # # 卷积层 卷积核 3x3 输出维度128
-    # model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
-    # # 最大池化层
-    # model.add(MaxPooling2D((2, 2)))
 
     # flatten层
     model.add(Flatten())
@@ -69,9 +46,6 @@ def cnn_model():
     model.summary()
 
     # 配置优化器
-    # model.compile(loss='binary_crossentropy',
-    #               optimizer=optimizers.RMSprop(lr=1e-4),
-    #               metrics=['accuracy'])
     # 动态学习率为指数衰减型
     lr_sch = keras.optimizers.schedules.ExponentialDecay(
         initial_learning_rate=1e-4,
@@ -79,8 +53,8 @@ def cnn_model():
         decay_rate=0.96,
         staircase=True
     )
-
-    gen_optimizer = keras.optimizers.Adam(learning_rate=lr_sch)  # adam优化器
+    # adam优化器
+    gen_optimizer = keras.optimizers.Adam(learning_rate=lr_sch)
     # 编译模型
     model.compile(
         optimizer=gen_optimizer,
@@ -94,8 +68,6 @@ def cnn_model():
 def get_plot_model():
     model = cnn_model()
     plot_model(model, to_file='resources/cnn_model_DenseNet121.png', dpi=100, show_shapes=True, show_layer_names=True)
-
-get_plot_model()
 
 # 训练模型
 def train_cnn_model():
@@ -150,24 +122,28 @@ def train_cnn_model():
         class_mode='categorical'
     )
 
+    time_begin = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(time_begin)
+
     # 训练模型
     history = model.fit_generator(
         train_generator,  # 定义的图片生成器
         steps_per_epoch=100,
-        epochs=2,  # 数据迭代的轮数
+        epochs=100,  # 数据迭代的轮数
         validation_data=validation_generator,
         validation_steps=50
     )
 
-    # y_pred = model.predict(train_generator, tg // batch_size + 1)
-    # y_pred_classes = np.argmax(y_pred, axis=1)
-    # confusion_mtx = confusion_matrix(y_true=train_generator.classes, y_pred=y_pred_classes)
-    # plot_confusion_matrix(confusion_mtx, normalize=True, target_names=['cats', 'dogs'])
+    time_end = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(time_end)
+
+    # 得出数据
     get_confusion_matrix(model,test_generator)
 
     # 保存训练得到的的模型
     model.save('data\catDogFight13-DenseNet121-f.h5')
 
+    # 可视化结果
     plt_result(history)
 
 # 得到混淆矩阵等数据
