@@ -6,7 +6,9 @@ from PIL import Image
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'  # 去掉加载GPU的警告
 
 def read_image():
-    path='H:\\Machine Learning\\CNN\\CNNProjects\\data\\test\\19.jpg'
+    # path='H:\\Machine Learning\\CNN\\CNNProjects\\data\\test\\380.jpg'
+    path='E:\\Desktop\\dog2.jpg'
+    # path='E:\\1\\微信图片_20190817133709.jpg'
     # path='./resources/cat.jpg'
     pil = Image.open(path,'r')
     return pil
@@ -33,16 +35,16 @@ def preditCatAndDog(pil,model):
         r = formatRes(r)
         print('预测结果: 狗')
         print('概率为: ',r)
-        return 'dog'
+        return 'dog',r
     else:
         r = res[0][0]
         r = formatRes(r)
         print('预测结果: 猫')
         print('概率为: ',r)
-        return 'cat'
+        return 'cat',r
 
 def getModel():
-    path = 'data\catDogFight13-DenseNet121-f.h5'
+    path = 'data\catDogFight-DenseNet121-f.h5'
     model = load_model(path)
     return model
 
@@ -58,14 +60,13 @@ def getModel():
 #         # plt.xticks([res])
 #     plt.show()
 
-
 def predit_one():
     # 载入模型
     model = getModel()
-    pil = read_image();
-    res = preditCatAndDog(pil, model)
+    pil = read_image()
+    res,r = preditCatAndDog(pil, model)
     plt.imshow(np.asarray(pil))
-    plt.xlabel(res)
+    plt.xlabel(res+'  '+str(r))
     plt.show()
 
 predit_one()

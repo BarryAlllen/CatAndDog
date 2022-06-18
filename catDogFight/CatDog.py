@@ -13,11 +13,10 @@ from tensorflow.python.keras.api.keras.layers import Dense
 from tensorflow.python.keras.api.keras.utils import plot_model
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'  # 去掉加载GPU的警告
 
-# 神经网络模型构建
-
 # 图片宽高
 wh = 200
 
+# 神经网络模型构建
 def cnn_model():
     # 初始化序列模型
     model = models.Sequential()
@@ -57,7 +56,7 @@ def cnn_model():
     # 编译模型
     model.compile(
         optimizer=gen_optimizer,
-        loss=keras.losses.BinaryCrossentropy(from_logits=True),
+        loss=keras.losses.BinaryCrossentropy(from_logits=False),
         metrics=['accuracy']
     )
 
@@ -125,7 +124,7 @@ def train_cnn_model():
     print(time_begin)
 
     # 训练模型
-    history = model.fit_generator(
+    history = model.fit(
         train_generator,  # 定义的图片生成器
         steps_per_epoch=100,
         epochs=100,  # 数据迭代的轮数
@@ -140,7 +139,7 @@ def train_cnn_model():
     get_confusion_matrix(model,test_generator)
 
     # 保存训练得到的的模型
-    model.save('data\catDogFight13-DenseNet121-f.h5')
+    model.save('data\catDogFight-DenseNet121-f.h5')
 
     # 可视化结果
     plt_result(history)
@@ -149,33 +148,33 @@ def train_cnn_model():
 def get_confusion_matrix(model ,test_generator):
     print('正在预测: ...')
     y_true = test_generator.classes
-    y_pred = model.predict(test_generator, batch_size=50, verbose=1)
+    y_pred = model.predict(test_generator, batch_size=32, verbose=1)
     y_pred = np.argmax(y_pred, axis=1)
     confusion_mtx = confusion_matrix(y_true=y_true, y_pred=y_pred)
     plot_confusion_matrix(confusion_mtx, normalize=True, target_names=['cats', 'dogs'])
 
 # 绘制混淆矩阵
-def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap='Greens', normalize=False):
+def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap='BuGn', normalize=False):
     tp = cm[0][0]
     tn = cm[1][1]
     fp = cm[1][0]
     fn = cm[0][1]
-    print('混淆矩阵:')
+    print('\n混淆矩阵:')
     print(cm)
     accuracy = np.trace(cm) / float(np.sum(cm))  # 准确率
     misclass = 1 - accuracy  # 错误率
-    recall = (tp) / (tp+fn) # 召回率
-    precision = (tp) / (tp+fp) # 精确率
-    F1score = 2 * precision * recall / (precision + recall) # F1score
-    print("准确率:"+str(round(accuracy,4)))
-    print("错误率:"+str(round(misclass,4)))
-    print("召回率:"+str(round(recall, 4)))
-    print("精确率:"+str(round(precision,4)))
-    print("F1score:"+str(round(F1score,4)))
+    recall = (tp) / (tp + fn)  # 召回率
+    precision = (tp) / (tp + fp)  # 精确率
+    F1score = 2 * precision * recall / (precision + recall)  # F1score
+    print("\n准确率:" + str(round(accuracy, 4)))
+    print("错误率:" + str(round(misclass, 4)))
+    print("召回率:" + str(round(recall, 4)))
+    print("精确率:" + str(round(precision, 4)))
+    print("F1score:" + str(round(F1score, 4)))
 
     if cmap is None:
-        plt.get_cmap('Blues')  # 颜色设置成蓝色
-    plt.figure(figsize=(16, 16))  # 设置窗口尺寸
+        plt.get_cmap('Greens')  # 颜色设置成蓝色
+    plt.figure(figsize=(6, 6))  # 设置窗口尺寸
     plt.imshow(cm, interpolation='nearest', cmap=cmap)  # 显示图片
     plt.title(title)  # 显示标题
     plt.colorbar()  # 绘制颜色条
@@ -202,10 +201,12 @@ def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap='Gree
                      horizontalalignment="center",  # 数字在方框中间
                      color="white" if cm[i, j] > thresh else "black")  # 设置字体颜色
 
-    plt.tight_layout()  # 自动调整子图参数,使之填充整个图像区域
+    # plt.tight_layout()  # 自动调整子图参数,使之填充整个图像区域
     plt.ylabel('True label')  # y方向上的标签
-    plt.xlabel("Predicted label\n accuracy={:0.4f}\n misclass={:0.4f}\n recall={:0.4f}\n precision={:0.4f}\n F1score={:0.4f}".format(accuracy, misclass, recall, precision,
-                                                                             F1score))  # x方向上的标签
+    plt.xlabel(
+        "Predicted label\n\n accuracy={:0.4f}    misclass={:0.4f}\nrecall={:0.4f}    precision={:0.4f}    F1score={:0.4f}".format(
+            accuracy, misclass, recall, precision,
+            F1score))  # x方向上的标签
     plt.show()  # 显示图片
 
 # 使曲线变得顺滑
