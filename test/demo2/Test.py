@@ -46,7 +46,7 @@ def evaluate_one_image():
         x = tf.placeholder(tf.float32, shape=[208, 208, 3])
 
         # 我门存放模型的路径
-        logs_train_dir = '/data/'
+        logs_train_dir = 'data/'
         # 定义saver
         saver = tf.train.Saver()
 
