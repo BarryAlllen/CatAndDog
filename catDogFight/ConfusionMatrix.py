@@ -24,7 +24,7 @@ def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap='BuGn
     print("错误率:" + str(round(misclass, 4)))
     print("召回率:" + str(round(recall, 4)))
     print("精确率:" + str(round(precision, 4)))
-    print("F1score:" + str(round(F1score, 4)))
+    print("F1 Score:" + str(round(F1score, 4)))
 
     if cmap is None:
         plt.get_cmap('Greens')  # 颜色设置成蓝色
@@ -40,18 +40,18 @@ def plot_confusion_matrix(cm, target_names, title='Confusion matrix', cmap='BuGn
         plt.yticks(tick_marks, target_names)  # y坐标
 
     if normalize:
-        cm = cm.astype('float32') / cm.sum(axis=1)
-        cm = np.round(cm, 2)  # 对数字保留两位小数
+        cm1 = cm.astype('float32') / cm.sum(axis=1)
+        cm1 = np.round(cm, 2)  # 对数字保留两位小数
 
-    thresh = cm.max() / 1.5 if normalize else cm.max() / 2
+    thresh = cm1.max() / 1.5 if normalize else cm.max() / 2
     for i, j in itertools.product(range(cm.shape[0]),
                                   range(cm.shape[1])):  # 将cm.shape[0]、cm.shape[1]中的元素组成元组，遍历元组中每一个数字
         if normalize:  # 标准化
-            plt.text(j, i, "{:0.2f}".format(cm[i, j]),  # 保留两位小数
+            plt.text(j, i, format(cm[i, j]),  # 保留两位小数
                      horizontalalignment="center",  # 数字在方框中间
                      color="white" if cm[i, j] > thresh else "black")  # 设置字体颜色
         else:  # 非标准化
-            plt.text(j, i, "{:,}".format(cm[i, j]),
+            plt.text(j, i, format(cm[i, j]),
                      horizontalalignment="center",  # 数字在方框中间
                      color="white" if cm[i, j] > thresh else "black")  # 设置字体颜色
 

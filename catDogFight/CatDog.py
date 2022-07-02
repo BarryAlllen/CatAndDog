@@ -98,7 +98,7 @@ def train_cnn_model():
         train_dir,
         # 图像统一尺寸
         target_size=(wh, wh),
-        # batch数据大小 一次输入40张图片进行训练
+        # batch数据大小 一次输入32张图片进行训练
         batch_size=32,
         class_mode='categorical'
     )

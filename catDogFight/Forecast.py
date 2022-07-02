@@ -6,8 +6,8 @@ from PIL import Image
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'  # 去掉加载GPU的警告
 
 def read_image():
-    # path='H:\\Machine Learning\\CNN\\CNNProjects\\data\\test\\380.jpg'
-    path='E:\\Desktop\\dog2.jpg'
+    path='H:\\Machine Learning\\CNN\\CNNProjects\\data\\test\\1380.jpg'
+    # path='E:\\Desktop\\dog2.jpg'
     # path='E:\\1\\微信图片_20190817133709.jpg'
     # path='./resources/cat.jpg'
     pil = Image.open(path,'r')
@@ -44,7 +44,7 @@ def preditCatAndDog(pil,model):
         return 'cat',r
 
 def getModel():
-    path = 'data\catDogFight-DenseNet121-f.h5'
+    path = 'data\catDogFight13-DenseNet121-f.h5'
     model = load_model(path)
     return model
 
