@@ -2,11 +2,12 @@ import os
 import matplotlib.pyplot as plt
 from tensorflow.python.keras.api.keras.models import load_model
 import numpy as np
+from tensorflow.python.keras.api.keras.preprocessing.image import ImageDataGenerator
 from PIL import Image
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'  # 去掉加载GPU的警告
 
 def read_image():
-    path='H:\\Machine Learning\\CNN\\CNNProjects\\data\\test\\1380.jpg'
+    path='H:\\Machine Learning\\CNN\\CNNProjects\\data\\1.jpg'
     # path='E:\\Desktop\\dog2.jpg'
     # path='E:\\1\\微信图片_20190817133709.jpg'
     # path='./resources/cat.jpg'
@@ -48,17 +49,29 @@ def getModel():
     model = load_model(path)
     return model
 
-# def predit_more():
-#     plt.figure()
-#     for i in range(1,9):
-#         path = 'H:\\Machine Learning\\CNN\\CNNProjects\\data\\test\\'+str(i)+'.jpg'
-#         img = Image.open(path, 'r')
-#         plt.subplot(2, 4, i + 1)
-#         plt.imshow(img)
-#         model = getModel()
-#         res = preditCatAndDog(img, model)
-#         # plt.xticks([res])
-#     plt.show()
+def predit_more():
+    test_datagen = ImageDataGenerator(rescale=1. / 255)
+
+    test_dir = 'H:\\Machine Learning\\CNN\\CNNProjects\\data\\train_data\\test'
+
+    test_generator = test_datagen.flow_from_directory(
+        test_dir,
+        target_size=(200, 200),
+        batch_size=50,
+        shuffle=True,
+        class_mode='categorical'
+    )
+    model = getModel()
+    y_pred = model.predict(test_generator, batch_size=50, verbose=1)
+    for i in range(1,11):
+        if y_pred[i][0]>y_pred[i][1]:
+            r = y_pred[i][0]
+            r = formatRes(r)
+            print("预测结果: 狗(dog)  概率为:",r)
+        else:
+            r = y_pred[i][1]
+            r = formatRes(r)
+            print("预测结果: 猫(cat)  概率为:",r)
 
 def predit_one():
     # 载入模型
