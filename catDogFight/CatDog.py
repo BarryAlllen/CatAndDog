@@ -33,7 +33,7 @@ def cnn_model():
 
     # 全连接层
     model.add(Dense(512, activation='relu'))
-    # # 退出层
+    # 退出层
     model.add(Dropout(0.5))
 
     # 全连接层 sigmoid
