@@ -45,7 +45,7 @@ def preditCatAndDog(pil,model):
         return 'cat',r
 
 def getModel():
-    path = 'data\catDogFight13-DenseNet121-f.h5'
+    path = 'data/catDogFight13-DenseNet121-f.h5'
     model = load_model(path)
     return model
 

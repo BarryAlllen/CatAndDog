@@ -80,7 +80,7 @@ test_generator = test_datagen.flow_from_directory(
     class_mode='categorical'
 )
 
-path = 'data\catDogFight13-DenseNet121-f.h5'
+path = 'data/catDogFight13-DenseNet121-f.h5'
 model = load_model(path)
 
 print('正在预测...')

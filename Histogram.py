@@ -3,6 +3,7 @@ import os
 import matplotlib.pyplot
 import pandas as pd
 
+# 得出直方图
 filenames = os.listdir('H:\\Machine Learning\\CNN\\CNNProjects\\data\\train')
 categories = []
 for filename in filenames:
