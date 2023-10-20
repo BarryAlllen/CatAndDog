@@ -2,7 +2,7 @@
 #### *Cat and dog recognition based on DenseNet —— CatAndDog猫狗大战*
 ___
 <div align=center>
-<img src="https://storage.googleapis.com/kaggle-competitions/kaggle/3362/media/woof_meow.jpg" width="300" height="185">
+<img src="https://storage.googleapis.com/kaggle-media/competitions/kaggle/3362/media/woof_meow.jpg" width="300" height="185">
 </div>
 
 1. ###概述
