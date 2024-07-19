@@ -21,9 +21,9 @@ ___
 > 
 > + Pretreatment.py：用于对拿到的数据集进行预处理
 >
-> >数据集是由Kaggle提供的猫狗图片，共计25000张，猫与狗各12500张。
-> >
-> >数据集网址：https://www.kaggle.com/c/dogs-vs-cats
+> 数据集是由Kaggle提供的猫狗图片，共计25000张，猫与狗各12500张。
+> 
+> 数据集网址：https://www.kaggle.com/c/dogs-vs-cats
 ____
 
 __作者：*Barry*__
