@@ -1,14 +1,14 @@
-#基于DenseNet网络的猫狗识别
+# 基于DenseNet网络的猫狗识别
 #### *Cat and dog recognition based on DenseNet —— CatAndDog猫狗大战*
 ___
 <div align=center>
-<img src="https://storage.googleapis.com/kaggle-media/competitions/kaggle/3362/media/woof_meow.jpg" width="300" height="185">
+<img src="https://storage.googleapis.com/kaggle-media/competitions/kaggle/3362/media/woof_meow.jpg" width="50%" height="50%">
 </div>
 
-1. ###概述
+## 1. 概述
 >利用DenseNet121神经网络模型，搭配Adam优化器，对猫狗进行二分类识别。
 
-2. ###文件描述
+## 2.  文件描述
 > + CatDog.py：训练模型主程序
 >
 > + ConfusionMatrix.py：输出混淆矩阵、准确率、召回率、精确率、F1 Score
